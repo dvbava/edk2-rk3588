@@ -38,6 +38,13 @@ STATIC BOOLEAN  mWindowsAcpiFixupsApplied = FALSE;
 
 #define SDT_PATTERN_LEN  (AML_NAME_SEG_SIZE + 1)
 
+STATIC
+EFI_STATUS
+EFIAPI
+AcpiFixupPcieEcam (
+  IN EXIT_BOOT_SERVICES_OS_TYPE  OsType
+  );
+
 //
 // Simple NameOp integer patcher.
 // Does not allocate memory and can be safely used at ExitBootServices.
@@ -267,6 +274,17 @@ NotifyEndOfDxeEvent (
   AcpiDsdtFixupStatus (mAcpiSdtProtocol, TableHandle);
 
   mAcpiSdtProtocol->Close (TableHandle);
+
+  if (PcdGet32 (PcdAcpiPcieEcamCompatMode) == ACPI_PCIE_ECAM_COMPAT_MODE_NXPMX6) {
+    //
+    // NXPMX6 is the Windows PCIe compatibility profile. Apply it before the
+    // loader runs so bootmgfw/winload never see placeholder PCIe resources.
+    //
+    AcpiUpdateSdtNameInteger (mDsdtTable, "EHID", 0);
+    AcpiFixupPcieEcam (ExitBootServicesOsWindows);
+    AcpiUpdateChecksum ((UINT8 *)mDsdtTable, mDsdtTable->Length);
+    mWindowsAcpiFixupsApplied = TRUE;
+  }
 }
 
 STATIC
