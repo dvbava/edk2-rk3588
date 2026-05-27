@@ -34,6 +34,7 @@ STATIC EFI_ACPI_DESCRIPTION_HEADER  *mDsdtTable;
 
 STATIC BOOLEAN  mIsSdmmcBoot = FALSE;
 STATIC BOOLEAN  mLoadedWindowsBootApplication = FALSE;
+STATIC BOOLEAN  mWindowsAcpiFixupsApplied = FALSE;
 
 #define SDT_PATTERN_LEN  (AML_NAME_SEG_SIZE + 1)
 
@@ -457,6 +458,39 @@ AcpiFixupPcieEcam (
 
 STATIC
 VOID
+ApplyWindowsAcpiFixups (
+  VOID
+  )
+{
+  EFI_STATUS  Status;
+
+  if (mWindowsAcpiFixupsApplied) {
+    return;
+  }
+
+  if ((mAcpiSdtProtocol == NULL) || (mDsdtTable == NULL)) {
+    return;
+  }
+
+  //
+  // Hide EHCI PNP ID for Windows to avoid binding to the inbox driver,
+  // which by default uses atomics on uncached memory and would crash
+  // the system.
+  //
+  AcpiUpdateSdtNameInteger (mDsdtTable, "EHID", 0);
+
+  Status = AcpiFixupPcieEcam (ExitBootServicesOsWindows);
+  if (EFI_ERROR (Status)) {
+    DEBUG ((DEBUG_ERROR, "AcpiPlatform: Failed to apply Windows PCIe ACPI fixups. Status=%r\n", Status));
+    return;
+  }
+
+  AcpiUpdateChecksum ((UINT8 *)mDsdtTable, mDsdtTable->Length);
+  mWindowsAcpiFixupsApplied = TRUE;
+}
+
+STATIC
+VOID
 EFIAPI
 AcpiPlatformExitBootServicesOsHandler (
   IN EXIT_BOOT_SERVICES_OS_CONTEXT  *Context
@@ -473,13 +507,8 @@ AcpiPlatformExitBootServicesOsHandler (
     OsType = ExitBootServicesOsWindows;
   }
 
-  //
-  // Hide EHCI PNP ID for Windows to avoid binding to the inbox driver,
-  // which by default uses atomics on uncached memory and would crash
-  // the system.
-  //
   if (OsType == ExitBootServicesOsWindows) {
-    AcpiUpdateSdtNameInteger (mDsdtTable, "EHID", 0);
+    ApplyWindowsAcpiFixups ();
   }
 
   //
@@ -490,7 +519,9 @@ AcpiPlatformExitBootServicesOsHandler (
     AcpiUpdateSdtNameInteger (mDsdtTable, "SDRM", 0);
   }
 
-  AcpiFixupPcieEcam (OsType);
+  if (OsType != ExitBootServicesOsWindows) {
+    AcpiFixupPcieEcam (OsType);
+  }
 
   AcpiUpdateChecksum ((UINT8 *)mDsdtTable, mDsdtTable->Length);
 }
@@ -603,6 +634,7 @@ NotifyLoadedImage (
     {
       DEBUG ((DEBUG_INFO, "AcpiPlatform: Windows boot application loaded\n"));
       mLoadedWindowsBootApplication = TRUE;
+      ApplyWindowsAcpiFixups ();
     }
 
     if (LoadedImage->DeviceHandle == NULL) {
