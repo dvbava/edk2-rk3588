@@ -1,9 +1,7 @@
 ## @file
 #
 #  Copyright (c) 2014-2018, Linaro Limited. All rights reserved.
-#  Copyright (c) 2022, Xilin Wu <wuxilin123@gmail.com>
-#  Copyright (c) 2023-2024, Mario Bălănică <mariobalanica02@gmail.com>
-#  Copyright (c) 2024, Yun Dou <dixyes@gmail.com>
+#  Copyright (c) 2026, The edk2-rk3588 contributors.
 #
 #  SPDX-License-Identifier: BSD-2-Clause-Patent
 #
@@ -15,10 +13,10 @@
 #
 ################################################################################
 [Defines]
-  PLATFORM_NAME                  = ROCK5BPlus
-  PLATFORM_VENDOR                = Radxa
-  PLATFORM_GUID                  = b3a14308-f25c-4b69-9387-47e0de34e3b7
-  PLATFORM_VERSION               = 0.2
+  PLATFORM_NAME                  = OrangePi5Pro
+  PLATFORM_VENDOR                = OrangePi
+  PLATFORM_GUID                  = 10b5a1f7-faf1-456a-a2be-3f063cd0ab2d
+  PLATFORM_VERSION               = 0.1
   DSC_SPECIFICATION              = 0x00010019
   OUTPUT_DIRECTORY               = Build/$(PLATFORM_NAME)
   VENDOR_DIRECTORY               = Platform/$(PLATFORM_VENDOR)
@@ -29,7 +27,7 @@
   FLASH_DEFINITION               = Silicon/Rockchip/RK3588/RK3588.fdf
   RK_PLATFORM_FVMAIN_MODULES     = $(PLATFORM_DIRECTORY)/$(PLATFORM_NAME).Modules.fdf.inc
 
-  # GMAC is not exposed
+  # Ethernet is provided by a PCIe-attached NIC.
   DEFINE RK3588_GMAC_ENABLE = FALSE
 
   #
@@ -39,9 +37,9 @@
   DEFINE RK_RTC8563_ENABLE = TRUE
 
   #
-  # RK3588-based platform
+  # RK3588S-based platform
   #
-!include Silicon/Rockchip/RK3588/RK3588Platform.dsc.inc
+!include Silicon/Rockchip/RK3588/RK3588SPlatform.dsc.inc
 
 ################################################################################
 #
@@ -60,15 +58,15 @@
 
 [PcdsFixedAtBuild.common]
   # SMBIOS platform config
-  gRockchipTokenSpaceGuid.PcdPlatformName|"ROCK 5 Model B Plus"
-  gRockchipTokenSpaceGuid.PcdPlatformVendorName|"Radxa"
-  gRockchipTokenSpaceGuid.PcdFamilyName|"ROCK 5"
-  gRockchipTokenSpaceGuid.PcdProductUrl|"https://docs.radxa.com/en/rock5/rock5b"
-  gRockchipTokenSpaceGuid.PcdDeviceTreeName|"rk3588-rock-5b-plus"
+  gRockchipTokenSpaceGuid.PcdPlatformName|"Orange Pi 5 Pro"
+  gRockchipTokenSpaceGuid.PcdPlatformVendorName|"Orange Pi"
+  gRockchipTokenSpaceGuid.PcdFamilyName|"Orange Pi 5"
+  gRockchipTokenSpaceGuid.PcdProductUrl|"http://www.orangepi.org/html/hardWare/computerAndMicrocontrollers/details/Orange-Pi-5-Pro.html"
+  gRockchipTokenSpaceGuid.PcdDeviceTreeName|"rk3588s-orangepi-5-pro"
 
   # I2C
   gRockchipTokenSpaceGuid.PcdI2cSlaveAddresses|{ 0x42, 0x43, 0x51, 0x11 }
-  gRockchipTokenSpaceGuid.PcdI2cSlaveBuses|{ 0x0, 0x0, 0x6, 0x7 }
+  gRockchipTokenSpaceGuid.PcdI2cSlaveBuses|{ 0x0, 0x0, 0x6, 0x3 }
   gRockchipTokenSpaceGuid.PcdI2cSlaveBusesRuntimeSupport|{ FALSE, FALSE, TRUE, FALSE }
   gRockchipTokenSpaceGuid.PcdRk860xRegulatorAddresses|{ 0x42, 0x43 }
   gRockchipTokenSpaceGuid.PcdRk860xRegulatorBuses|{ 0x0, 0x0 }
@@ -79,28 +77,16 @@
   #
   # PCIe/SATA/USB Combo PIPE PHY support flags and default values
   #
-  gRK3588TokenSpaceGuid.PcdPcie30PhyModeSwitchable|TRUE
-  gRK3588TokenSpaceGuid.PcdPcie30PhyModeDefault|$(PCIE30_PHY_MODE_NANBNB)
-  gRK3588TokenSpaceGuid.PcdPcie30x2Supported|TRUE
-  gRK3588TokenSpaceGuid.PcdComboPhy0Switchable|FALSE
-  gRK3588TokenSpaceGuid.PcdComboPhy1Switchable|TRUE
+  gRK3588TokenSpaceGuid.PcdComboPhy0Switchable|TRUE
   gRK3588TokenSpaceGuid.PcdComboPhy2Switchable|TRUE
   gRK3588TokenSpaceGuid.PcdComboPhy0ModeDefault|$(COMBO_PHY_MODE_PCIE)
-  gRK3588TokenSpaceGuid.PcdComboPhy1ModeDefault|$(COMBO_PHY_MODE_PCIE)
-  gRK3588TokenSpaceGuid.PcdComboPhy2ModeDefault|$(COMBO_PHY_MODE_USB3)
+  gRK3588TokenSpaceGuid.PcdComboPhy2ModeDefault|$(COMBO_PHY_MODE_PCIE)
 
   #
   # USB/DP Combo PHY support flags and default values
   #
   gRK3588TokenSpaceGuid.PcdUsbDpPhy0Supported|TRUE
-  gRK3588TokenSpaceGuid.PcdUsbDpPhy1Supported|TRUE
-  gRK3588TokenSpaceGuid.PcdDp0LaneMux|{ 0x2, 0x3 }
-  gRK3588TokenSpaceGuid.PcdDp1LaneMux|{ 0x0 }
-
-  #
-  # I2S
-  #
-  gRK3588TokenSpaceGuid.PcdI2S0Supported|TRUE
+  gRK3588TokenSpaceGuid.PcdDp0LaneMux|{ 0x0, 0x1 }
 
   #
   # On-Board fan output
@@ -108,36 +94,11 @@
   gRK3588TokenSpaceGuid.PcdHasOnBoardFanOutput|TRUE
 
   #
-  # Default to DTB Only with patch support
-  #
-  gRK3588TokenSpaceGuid.PcdConfigTableModeDefault|0x00000002
-  gRK3588TokenSpaceGuid.PcdFdtSupportOverridesDefault|TRUE
-
-  #
-  # Default to HTTP boot only, no IPv6
-  #
-  gRockchipTokenSpaceGuid.PcdNetworkStackIpv6EnabledDefault|FALSE
-  gRockchipTokenSpaceGuid.PcdNetworkStackPxeBootEnabledDefault|FALSE
-
-  #
-  # Default to force display disabled
-  #
-  gRK3588TokenSpaceGuid.PcdDisplayForceOutputDefault|FALSE
-
-  #
   # Display support flags and default values
   #
   gRK3588TokenSpaceGuid.PcdDisplayConnectors|{CODE({
-    VOP_OUTPUT_IF_HDMI0,
-    VOP_OUTPUT_IF_HDMI1,
-    VOP_OUTPUT_IF_DP0
+    VOP_OUTPUT_IF_HDMI0
   })}
-
-[PcdsDynamicHii.common.DEFAULT]
-  #
-  # Set onboard cooling fan to 100%
-  #
-  gRK3588TokenSpaceGuid.PcdCoolingFanSpeed|L"CoolingFanSpeed"|gRK3588DxeFormSetGuid|0x0|100
 
 ################################################################################
 #
