@@ -100,7 +100,7 @@
   #
   gRK3588TokenSpaceGuid.PcdConfigTableModeDefault|0x00000002
   gRK3588TokenSpaceGuid.PcdFdtSupportOverridesDefault|TRUE
-  
+
   #
   # Default to HTTP boot only, no IPv6
   #

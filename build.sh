@@ -388,4 +388,3 @@ then
 else
     _build "${DEVICE}"
 fi
-

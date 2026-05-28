@@ -975,7 +975,7 @@ FdtFixupGmacMacAddress (
     Ret = FdtSetProp (*Fdt, Node, "mac-address", &MacAddressCopy.Addr, NET_ETHER_ADDR_LEN);
     if (Ret < 0) {
       DEBUG((DEBUG_ERROR, "FdtPlatform: Failed to set 'mac-address' for '%a'. Ret=%a\n",
-             GmacNodes[Index].NodePath, FdtStrerror (Ret)));     
+             GmacNodes[Index].NodePath, FdtStrerror (Ret)));
       continue;
     }
 
