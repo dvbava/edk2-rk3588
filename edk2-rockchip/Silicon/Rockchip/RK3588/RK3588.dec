@@ -48,6 +48,7 @@
 
   gRK3588TokenSpaceGuid.PcdConfigTableModeDefault|0|UINT32|0x00010300
   gRK3588TokenSpaceGuid.PcdAcpiPcieEcamCompatModeDefault|0|UINT32|0x00010301
+  gRK3588TokenSpaceGuid.PcdAcpiHideEhciForWindows|TRUE|BOOLEAN|0x00010302
   gRK3588TokenSpaceGuid.PcdFdtCompatModeDefault|0|UINT32|0x00010351
   gRK3588TokenSpaceGuid.PcdFdtForceGopDefault|0|UINT8|0x00010352
   gRK3588TokenSpaceGuid.PcdFdtSupportOverridesDefault|0|UINT8|0x00010353

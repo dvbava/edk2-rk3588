@@ -479,12 +479,14 @@ ApplyWindowsAcpiFixups (
     return;
   }
 
-  //
-  // Hide EHCI PNP ID for Windows to avoid binding to the inbox driver,
-  // which by default uses atomics on uncached memory and would crash
-  // the system.
-  //
-  AcpiUpdateSdtNameInteger (mDsdtTable, "EHID", 0);
+  if (FixedPcdGetBool (PcdAcpiHideEhciForWindows)) {
+    //
+    // Hide EHCI PNP ID for Windows to avoid binding to the inbox driver,
+    // which by default uses atomics on uncached memory and would crash
+    // the system.
+    //
+    AcpiUpdateSdtNameInteger (mDsdtTable, "EHID", 0);
+  }
 
   Status = AcpiFixupPcieEcam (ExitBootServicesOsWindows);
   if (EFI_ERROR (Status)) {

@@ -89,6 +89,12 @@
   gRK3588TokenSpaceGuid.PcdDp0LaneMux|{ 0x0, 0x1 }
 
   #
+  # Keep the USB2 EHCI controller visible to Windows setup for keyboard/mouse
+  # input while booting from a USB storage enclosure.
+  #
+  gRK3588TokenSpaceGuid.PcdAcpiHideEhciForWindows|FALSE
+
+  #
   # On-Board fan output
   #
   gRK3588TokenSpaceGuid.PcdHasOnBoardFanOutput|TRUE
