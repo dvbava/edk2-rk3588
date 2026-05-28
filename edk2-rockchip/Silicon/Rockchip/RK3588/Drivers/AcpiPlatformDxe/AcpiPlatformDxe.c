@@ -274,17 +274,6 @@ NotifyEndOfDxeEvent (
   AcpiDsdtFixupStatus (mAcpiSdtProtocol, TableHandle);
 
   mAcpiSdtProtocol->Close (TableHandle);
-
-  if (PcdGet32 (PcdAcpiPcieEcamCompatMode) == ACPI_PCIE_ECAM_COMPAT_MODE_NXPMX6) {
-    //
-    // NXPMX6 is the Windows PCIe compatibility profile. Apply it before the
-    // loader runs so bootmgfw/winload never see placeholder PCIe resources.
-    //
-    AcpiUpdateSdtNameInteger (mDsdtTable, "EHID", 0);
-    AcpiFixupPcieEcam (ExitBootServicesOsWindows);
-    AcpiUpdateChecksum ((UINT8 *)mDsdtTable, mDsdtTable->Length);
-    mWindowsAcpiFixupsApplied = TRUE;
-  }
 }
 
 STATIC
