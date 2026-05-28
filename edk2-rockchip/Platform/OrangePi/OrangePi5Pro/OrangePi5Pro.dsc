@@ -100,6 +100,11 @@
     VOP_OUTPUT_IF_HDMI0
   })}
 
+  #
+  # Experimental Windows PCIe MSI routing for onboard RK3588S NVMe.
+  #
+  gRK3588TokenSpaceGuid.PcdAcpiGicItsSupported|TRUE
+
 ################################################################################
 #
 # Components Section - list of all EDK II Modules needed by this Platform.

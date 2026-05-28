@@ -30,6 +30,7 @@
   $(RK_COMMON_ACPI_DIR)/Gtdt.aslc
   $(RK_COMMON_ACPI_DIR)/Spcr.aslc
   $(RK_COMMON_ACPI_DIR)/Mcfg.aslc
+  Rk3588sPcieIort.aslc
   $(RK_COMMON_ACPI_DIR)/Dbg2.aslc
   $(RK_COMMON_ACPI_DIR)/Pptt.aslc
 
@@ -51,6 +52,7 @@
   gArmTokenSpaceGuid.PcdGicDistributorBase
   gArmTokenSpaceGuid.PcdGicRedistributorsBase
   gEfiMdeModulePkgTokenSpaceGuid.PcdSerialRegisterBase
+  gRK3588TokenSpaceGuid.PcdAcpiGicItsSupported
   gRK3588TokenSpaceGuid.PcdI2S0Supported
   gRK3588TokenSpaceGuid.PcdI2S1Supported
   gRockchipTokenSpaceGuid.PcdRkMtlMailBoxBase
