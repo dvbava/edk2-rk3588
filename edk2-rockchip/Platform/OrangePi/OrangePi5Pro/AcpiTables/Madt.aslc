@@ -27,7 +27,7 @@ typedef struct {
   EFI_ACPI_6_0_GIC_DISTRIBUTOR_STRUCTURE                 GicDistributor;
   EFI_ACPI_6_0_GICR_STRUCTURE                            GicRedistributors;
   // EFI_ACPI_6_0_GIC_MSI_FRAME_STRUCTURE                  GicMsiFrame;
-  // EFI_ACPI_6_0_GIC_ITS_STRUCTURE                        GicIts[2];
+  EFI_ACPI_6_0_GIC_ITS_STRUCTURE                         GicIts[2];
 } EFI_ACPI_6_0_MULTIPLE_APIC_DESCRIPTION_TABLE;
 
 #pragma pack ()
@@ -192,14 +192,15 @@ EFI_ACPI_6_0_MULTIPLE_APIC_DESCRIPTION_TABLE  Madt = {
   //   424
   // },
 
-  /* ITS is broken on RK35xx!*/
-  // Linux has a workaround for the erratum, but no way to describe
-  // this in ACPI yet.
   //
-  // {
-  //   EFI_ACPI_6_0_GIC_ITS_FRAME_INIT(0, 0xfe640000),
-  //   EFI_ACPI_6_0_GIC_ITS_FRAME_INIT(1, 0xfe660000)
-  // },
+  // Orange Pi 5 Pro uses RK3588S PCIe segments 3 and 4 for onboard NVMe and
+  // Ethernet. Expose ITS here so Windows can consume the board-local IORT
+  // MSI requester ID mappings.
+  //
+  {
+    EFI_ACPI_6_0_GIC_ITS_FRAME_INIT(0, 0xfe640000),
+    EFI_ACPI_6_0_GIC_ITS_FRAME_INIT(1, 0xfe660000)
+  },
 };
 
 //

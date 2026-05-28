@@ -25,7 +25,7 @@
 
 [Sources]
   Dsdt.asl
-  $(RK_COMMON_ACPI_DIR)/Madt.aslc
+  Madt.aslc
   $(RK_COMMON_ACPI_DIR)/Fadt.aslc
   $(RK_COMMON_ACPI_DIR)/Gtdt.aslc
   $(RK_COMMON_ACPI_DIR)/Spcr.aslc
@@ -52,7 +52,6 @@
   gArmTokenSpaceGuid.PcdGicDistributorBase
   gArmTokenSpaceGuid.PcdGicRedistributorsBase
   gEfiMdeModulePkgTokenSpaceGuid.PcdSerialRegisterBase
-  gRK3588TokenSpaceGuid.PcdAcpiGicItsSupported
   gRK3588TokenSpaceGuid.PcdI2S0Supported
   gRK3588TokenSpaceGuid.PcdI2S1Supported
   gRockchipTokenSpaceGuid.PcdRkMtlMailBoxBase
