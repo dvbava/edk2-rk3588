@@ -388,8 +388,8 @@
   #
   # USB/DP PHY
   #
-  gRK3588TokenSpaceGuid.PcdUsbDpPhy0Usb3State|L"UsbDpPhy0Usb3State"|gRK3588DxeFormSetGuid|0x0|$(USBDP_PHY_USB3_STATE_ENABLED)
-  gRK3588TokenSpaceGuid.PcdUsbDpPhy1Usb3State|L"UsbDpPhy1Usb3State"|gRK3588DxeFormSetGuid|0x0|$(USBDP_PHY_USB3_STATE_ENABLED)
+  gRK3588TokenSpaceGuid.PcdUsbDpPhy0Usb3State|L"UsbDpPhy0Usb3State"|gRK3588DxeFormSetGuid|0x0|gRK3588TokenSpaceGuid.PcdUsbDpPhy0Usb3StateDefault
+  gRK3588TokenSpaceGuid.PcdUsbDpPhy1Usb3State|L"UsbDpPhy1Usb3State"|gRK3588DxeFormSetGuid|0x0|gRK3588TokenSpaceGuid.PcdUsbDpPhy1Usb3StateDefault
 
   #
   # Display

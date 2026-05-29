@@ -752,7 +752,7 @@ formset
           prompt      = STRING_TOKEN(STR_USBDP_PHY0_USB3_STATE_PROMPT),
           help        = STRING_TOKEN(STR_USBDP_PHY_USB3_STATE_PROMPT),
           flags       = NUMERIC_SIZE_4 | INTERACTIVE | RESET_REQUIRED,
-          default     = USBDP_PHY_USB3_STATE_ENABLED,
+          default     = FixedPcdGet32 (PcdUsbDpPhy0Usb3StateDefault),
           option text = STRING_TOKEN(STR_ENABLED), value = USBDP_PHY_USB3_STATE_ENABLED, flags = 0;
           option text = STRING_TOKEN(STR_DISABLED), value = USBDP_PHY_USB3_STATE_DISABLED, flags = 0;
         endoneof;
@@ -763,7 +763,7 @@ formset
           prompt      = STRING_TOKEN(STR_USBDP_PHY1_USB3_STATE_PROMPT),
           help        = STRING_TOKEN(STR_USBDP_PHY_USB3_STATE_PROMPT),
           flags       = NUMERIC_SIZE_4 | INTERACTIVE | RESET_REQUIRED,
-          default     = USBDP_PHY_USB3_STATE_ENABLED,
+          default     = FixedPcdGet32 (PcdUsbDpPhy1Usb3StateDefault),
           option text = STRING_TOKEN(STR_ENABLED), value = USBDP_PHY_USB3_STATE_ENABLED, flags = 0;
           option text = STRING_TOKEN(STR_DISABLED), value = USBDP_PHY_USB3_STATE_DISABLED, flags = 0;
         endoneof;
