@@ -77,6 +77,7 @@
   #
   # PCIe/SATA/USB Combo PIPE PHY support flags and default values
   #
+  gRK3588TokenSpaceGuid.PcdComboPhy0Switchable|TRUE
   gRK3588TokenSpaceGuid.PcdComboPhy2Switchable|TRUE
   gRK3588TokenSpaceGuid.PcdComboPhy0ModeDefault|$(COMBO_PHY_MODE_PCIE)
   gRK3588TokenSpaceGuid.PcdComboPhy2ModeDefault|$(COMBO_PHY_MODE_PCIE)
@@ -85,7 +86,6 @@
   # USB/DP Combo PHY support flags and default values
   #
   gRK3588TokenSpaceGuid.PcdUsbDpPhy0Supported|TRUE
-  gRK3588TokenSpaceGuid.PcdUsbDpPhy0Usb3StateDefault|$(USBDP_PHY_USB3_STATE_DISABLED)
   gRK3588TokenSpaceGuid.PcdDp0LaneMux|{ 0x0, 0x1 }
 
   #

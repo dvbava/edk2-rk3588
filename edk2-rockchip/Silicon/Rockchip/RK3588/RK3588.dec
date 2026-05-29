@@ -61,8 +61,6 @@
   gRK3588TokenSpaceGuid.PcdUsbDpPhy1Supported|FALSE|BOOLEAN|0x00010502
   gRK3588TokenSpaceGuid.PcdDp0LaneMux|{ 0x0 }|VOID*|0x00010503
   gRK3588TokenSpaceGuid.PcdDp1LaneMux|{ 0x0 }|VOID*|0x00010504
-  gRK3588TokenSpaceGuid.PcdUsbDpPhy0Usb3StateDefault|1|UINT32|0x00010505
-  gRK3588TokenSpaceGuid.PcdUsbDpPhy1Usb3StateDefault|1|UINT32|0x00010506
 
   gRK3588TokenSpaceGuid.PcdGmac0Supported|FALSE|BOOLEAN|0x00010601
   gRK3588TokenSpaceGuid.PcdGmac1Supported|FALSE|BOOLEAN|0x00010602

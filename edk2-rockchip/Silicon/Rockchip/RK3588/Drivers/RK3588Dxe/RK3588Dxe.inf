@@ -121,8 +121,6 @@
 
   gRK3588TokenSpaceGuid.PcdUsbDpPhy0Supported
   gRK3588TokenSpaceGuid.PcdUsbDpPhy1Supported
-  gRK3588TokenSpaceGuid.PcdUsbDpPhy0Usb3StateDefault
-  gRK3588TokenSpaceGuid.PcdUsbDpPhy1Usb3StateDefault
   gRK3588TokenSpaceGuid.PcdUsbDpPhy0Usb3State
   gRK3588TokenSpaceGuid.PcdUsbDpPhy1Usb3State
 

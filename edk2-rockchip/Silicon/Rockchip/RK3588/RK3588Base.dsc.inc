@@ -278,12 +278,6 @@
   gRK3588TokenSpaceGuid.PcdPcie30PhyModeDefault|$(PCIE30_PHY_MODE_AGGREGATION)
 
   #
-  # USB/DP PHY support default values
-  #
-  gRK3588TokenSpaceGuid.PcdUsbDpPhy0Usb3StateDefault|$(USBDP_PHY_USB3_STATE_ENABLED)
-  gRK3588TokenSpaceGuid.PcdUsbDpPhy1Usb3StateDefault|$(USBDP_PHY_USB3_STATE_ENABLED)
-
-  #
   # ACPI / Device Tree support flags and default values
   #
   gRK3588TokenSpaceGuid.PcdConfigTableModeDefault|$(CONFIG_TABLE_MODE_ACPI_FDT)
@@ -394,8 +388,8 @@
   #
   # USB/DP PHY
   #
-  gRK3588TokenSpaceGuid.PcdUsbDpPhy0Usb3State|L"UsbDpPhy0Usb3State"|gRK3588DxeFormSetGuid|0x0|gRK3588TokenSpaceGuid.PcdUsbDpPhy0Usb3StateDefault
-  gRK3588TokenSpaceGuid.PcdUsbDpPhy1Usb3State|L"UsbDpPhy1Usb3State"|gRK3588DxeFormSetGuid|0x0|gRK3588TokenSpaceGuid.PcdUsbDpPhy1Usb3StateDefault
+  gRK3588TokenSpaceGuid.PcdUsbDpPhy0Usb3State|L"UsbDpPhy0Usb3State"|gRK3588DxeFormSetGuid|0x0|$(USBDP_PHY_USB3_STATE_ENABLED)
+  gRK3588TokenSpaceGuid.PcdUsbDpPhy1Usb3State|L"UsbDpPhy1Usb3State"|gRK3588DxeFormSetGuid|0x0|$(USBDP_PHY_USB3_STATE_ENABLED)
 
   #
   # Display
