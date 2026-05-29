@@ -7,5 +7,5 @@ cd /repo && `
 git submodule update --init --recursive --depth 1 --jobs 4 && `
 sed -i 's/\r$//' build.sh configs/*.conf misc/rkbin/RKBOOT/*.ini misc/rkbin/RKTRUST/*.ini misc/extractbl31.py && `
 ./build.sh -d orangepi-5-pro -r RELEASE && `
-git status && `
+git branch --show-current && `
 cp /repo/*.img /output/"
