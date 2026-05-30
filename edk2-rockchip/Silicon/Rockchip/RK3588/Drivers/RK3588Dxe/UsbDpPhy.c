@@ -41,7 +41,7 @@ SetupUsbDpPhyVariables (
                   &Size,
                   &Var32
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR (Status) || FixedPcdGetBool (PcdUsbDpPhyForceUsb3Enabled)) {
     Status = PcdSet32S (PcdUsbDpPhy0Usb3State, USBDP_PHY_USB3_STATE_ENABLED);
     ASSERT_EFI_ERROR (Status);
   }
@@ -53,7 +53,7 @@ SetupUsbDpPhyVariables (
                   &Size,
                   &Var32
                   );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR (Status) || FixedPcdGetBool (PcdUsbDpPhyForceUsb3Enabled)) {
     Status = PcdSet32S (PcdUsbDpPhy1Usb3State, USBDP_PHY_USB3_STATE_ENABLED);
     ASSERT_EFI_ERROR (Status);
   }

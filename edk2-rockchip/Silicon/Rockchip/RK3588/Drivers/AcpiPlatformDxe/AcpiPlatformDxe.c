@@ -13,6 +13,7 @@
 #include <Protocol/ExitBootServicesOsNotify.h>
 #include <Protocol/LoadedImage.h>
 #include <Protocol/NonDiscoverableDevice.h>
+#include <Protocol/DevicePath.h>
 #include <Library/AcpiLib.h>
 #include <Library/BaseLib.h>
 #include <Library/BaseMemoryLib.h>
@@ -32,8 +33,17 @@ STATIC EFI_ACPI_SDT_PROTOCOL        *mAcpiSdtProtocol;
 STATIC EFI_ACPI_DESCRIPTION_HEADER  *mDsdtTable;
 
 STATIC BOOLEAN  mIsSdmmcBoot = FALSE;
+STATIC BOOLEAN  mLoadedWindowsBootApplication = FALSE;
+STATIC BOOLEAN  mWindowsAcpiFixupsApplied = FALSE;
 
 #define SDT_PATTERN_LEN  (AML_NAME_SEG_SIZE + 1)
+
+STATIC
+EFI_STATUS
+EFIAPI
+AcpiFixupPcieEcam (
+  IN EXIT_BOOT_SERVICES_OS_TYPE  OsType
+  );
 
 //
 // Simple NameOp integer patcher.
@@ -97,6 +107,69 @@ AcpiUpdateSdtNameInteger (
   }
 
   return EFI_NOT_FOUND;
+}
+
+STATIC
+INTN
+StriCmp (
+  IN CONST CHAR16  *String1,
+  IN CONST CHAR16  *String2
+  )
+{
+  while ((*String1 != L'\0') &&
+         (CharToUpper (*String1) == CharToUpper (*String2)))
+  {
+    String1++;
+    String2++;
+  }
+
+  return CharToUpper (*String1) - CharToUpper (*String2);
+}
+
+STATIC
+BOOLEAN
+StringEndsWith (
+  IN CONST CHAR16  *String,
+  IN CONST CHAR16  *Suffix
+  )
+{
+  UINTN  StringLength;
+  UINTN  SuffixLength;
+
+  StringLength = StrLen (String);
+  SuffixLength = StrLen (Suffix);
+
+  if (StringLength < SuffixLength) {
+    return FALSE;
+  }
+
+  return StriCmp (String + StringLength - SuffixLength, Suffix) == 0;
+}
+
+STATIC
+BOOLEAN
+IsWindowsBootApplicationPath (
+  IN EFI_DEVICE_PATH_PROTOCOL  *DevicePath
+  )
+{
+  FILEPATH_DEVICE_PATH  *FilePath;
+
+  while (!IsDevicePathEnd (DevicePath)) {
+    if ((DevicePathType (DevicePath) == MEDIA_DEVICE_PATH) &&
+        (DevicePathSubType (DevicePath) == MEDIA_FILEPATH_DP))
+    {
+      FilePath = (FILEPATH_DEVICE_PATH *)DevicePath;
+      if (  StringEndsWith (FilePath->PathName, L"bootmgfw.efi")
+         || StringEndsWith (FilePath->PathName, L"winload.efi"))
+      {
+        return TRUE;
+      }
+    }
+
+    DevicePath = NextDevicePathNode (DevicePath);
+  }
+
+  return FALSE;
 }
 
 STATIC
@@ -392,6 +465,39 @@ AcpiFixupPcieEcam (
 
 STATIC
 VOID
+ApplyWindowsAcpiFixups (
+  VOID
+  )
+{
+  EFI_STATUS  Status;
+
+  if (mWindowsAcpiFixupsApplied) {
+    return;
+  }
+
+  if ((mAcpiSdtProtocol == NULL) || (mDsdtTable == NULL)) {
+    return;
+  }
+
+  //
+  // Hide EHCI PNP ID for Windows to avoid binding to the inbox driver,
+  // which by default uses atomics on uncached memory and would crash
+  // the system.
+  //
+  AcpiUpdateSdtNameInteger (mDsdtTable, "EHID", 0);
+
+  Status = AcpiFixupPcieEcam (ExitBootServicesOsWindows);
+  if (EFI_ERROR (Status)) {
+    DEBUG ((DEBUG_ERROR, "AcpiPlatform: Failed to apply Windows PCIe ACPI fixups. Status=%r\n", Status));
+    return;
+  }
+
+  AcpiUpdateChecksum ((UINT8 *)mDsdtTable, mDsdtTable->Length);
+  mWindowsAcpiFixupsApplied = TRUE;
+}
+
+STATIC
+VOID
 EFIAPI
 AcpiPlatformExitBootServicesOsHandler (
   IN EXIT_BOOT_SERVICES_OS_CONTEXT  *Context
@@ -403,13 +509,13 @@ AcpiPlatformExitBootServicesOsHandler (
     return;
   }
 
-  //
-  // Hide EHCI PNP ID for Windows to avoid binding to the inbox driver,
-  // which by default uses atomics on uncached memory and would crash
-  // the system.
-  //
+  if ((OsType == ExitBootServicesOsUnknown) && mLoadedWindowsBootApplication) {
+    DEBUG ((DEBUG_WARN, "AcpiPlatform: Treating unknown OS loader as Windows based on loaded image path\n"));
+    OsType = ExitBootServicesOsWindows;
+  }
+
   if (OsType == ExitBootServicesOsWindows) {
-    AcpiUpdateSdtNameInteger (mDsdtTable, "EHID", 0);
+    ApplyWindowsAcpiFixups ();
   }
 
   //
@@ -420,7 +526,9 @@ AcpiPlatformExitBootServicesOsHandler (
     AcpiUpdateSdtNameInteger (mDsdtTable, "SDRM", 0);
   }
 
-  AcpiFixupPcieEcam (OsType);
+  if (OsType != ExitBootServicesOsWindows) {
+    AcpiFixupPcieEcam (OsType);
+  }
 
   AcpiUpdateChecksum ((UINT8 *)mDsdtTable, mDsdtTable->Length);
 }
@@ -525,6 +633,15 @@ NotifyLoadedImage (
         Status
         ));
       break;
+    }
+
+    if (!mLoadedWindowsBootApplication &&
+        (LoadedImage->FilePath != NULL) &&
+        IsWindowsBootApplicationPath (LoadedImage->FilePath))
+    {
+      DEBUG ((DEBUG_INFO, "AcpiPlatform: Windows boot application loaded\n"));
+      mLoadedWindowsBootApplication = TRUE;
+      ApplyWindowsAcpiFixups ();
     }
 
     if (LoadedImage->DeviceHandle == NULL) {

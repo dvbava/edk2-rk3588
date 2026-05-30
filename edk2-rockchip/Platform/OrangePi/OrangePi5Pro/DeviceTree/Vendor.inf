@@ -1,0 +1,21 @@
+#/** @file
+#
+#  Copyright (c) 2026, The edk2-rk3588 contributors.
+#
+#  SPDX-License-Identifier: BSD-2-Clause-Patent
+#
+#**/
+
+[Defines]
+  INF_VERSION                    = 0x0001001A
+  BASE_NAME                      = DeviceTree-Vendor
+  FILE_GUID                      = d58b4028-43d8-4e97-87d4-4e3716136580
+  MODULE_TYPE                    = USER_DEFINED
+  VERSION_STRING                 = 1.0
+
+[Sources]
+  devicetree/mainline/rk3588s-orangepi-5-pro.dts
+
+[Packages]
+  MdePkg/MdePkg.dec
+  Silicon/Rockchip/RockchipPkg.dec
